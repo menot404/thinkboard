@@ -8,8 +8,9 @@ import Navbar from './components/Navbar'
 function App() {
   return (
     <>
-      <div data-theme="forest">
+      <div className='h-full w-full' data-theme="forest">
         <Navbar />
+
         <div>
           <Routes>
             <Route path='/' element={<HomePage />} />
