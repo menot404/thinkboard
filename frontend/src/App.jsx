@@ -8,9 +8,9 @@ import Navbar from './components/Navbar'
 function App() {
   return (
     <>
-      <div className='h-full w-full' data-theme="forest">
+      <div className='relative h-full w-full' data-theme="forest">
         <Navbar />
-
+          <div className='absolute inset-0 -z-10 h-full w-full px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_60%,#00FF9D40_100%)]'/>
         <div>
           <Routes>
             <Route path='/' element={<HomePage />} />
