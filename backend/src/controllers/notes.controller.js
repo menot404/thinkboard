@@ -2,7 +2,7 @@ import Note from '../models/Note.js';
 
 const getAllNotes = async (_, res)=>{
     try {
-        const notes = await Note.find().sort({ createdAt: 1 });
+        const notes = await Note.find().sort({ createdAt: -1 });
         res.status(200).json({
             message: "Notes retrieved successfully",
             notes: notes
