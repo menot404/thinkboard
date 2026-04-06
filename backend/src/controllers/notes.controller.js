@@ -58,7 +58,7 @@ const updateNoteById =  async (req, res)=>{
     try {
         const id = req.params.id;
         const updateBody = req.body;
-        const updatedNote = await Note.findByIdAndUpdate(id, updateBody, {new: true});
+        const updatedNote = await Note.findByIdAndUpdate(id, updateBody, {returnDocument: 'after'});
 
         if (!updateBody || Object.keys(updateBody).length === 0) {
             return res.status(404).json({
