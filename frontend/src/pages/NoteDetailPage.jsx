@@ -28,12 +28,34 @@ const NoteDetailPage = () => {
   }, [id]);
 
   const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this note?")) return;
 
+    try {
+      await api.delete(`/notes/${id}`);
+      toast.success("Note deleted");
+      navigate("/");
+    } catch (error) {
+      console.error(` ${error.message}`);
+      toast.error("Failed to delete note. Please try again later.");
+    }
   }
 
   const handleSave = async () => {
-
-
+    if (!note.title.trim() || !note.content.trim()) {
+      toast.error("Note title and content cannot be empty.");
+      return;
+    }
+    setSaving(true);
+    try {
+      await api.put(`/notes/${id}`, note);
+      toast.success("Note updated successfully.");
+      navigate("/");
+    } catch (error) {
+      console.error(` ${error.message}`);
+      toast.error("Failed to save note. Please try again later.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   if (loading) {
