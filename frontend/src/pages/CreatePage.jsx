@@ -63,25 +63,25 @@ const CreatePage = () => {
                   action=""
                   onSubmit={handleSubmit}
                   >
-                    <div className="form-control mb-4">
+                    <div className="form-control mb-6 flex flex-col gap-2">
                       <label htmlFor="" className="label">
-                        <span className="label-text">Note Title</span>
+                        <span className="label-text">Note Title: </span>
                       </label>
                       <input 
                         type="text"
                         placeholder="Note Title"
-                        className="input input-border"
+                        className="input input-primary input-bordered focus:outline-0 focus:ring-2 focus:ring-primary focus:border-transparent"
                         value={title}
                         onChange={(e)=>setTitle(e.target.value)}
                       />
                     </div>
-                    <div className="form-control mb-4">
+                    <div className="form-control mb-6 flex flex-col gap-2">
                       <label htmlFor="" className="label">
-                        <span className="label-text">Content</span>
+                        <span className="label-text">Content: </span>
                       </label>
                       <textarea 
                         placeholder="Write your note content here..."
-                        className="textarea textarea-bordered h-32"
+                        className="textarea textarea-bordered h-32 input-primary pl-4 pt-4 focus:outline-0 focus:ring-2 focus:ring-primary focus:border-transparent"
                         value={content}
                         onChange={(e)=>setContent(e.target.value)}
                       />
