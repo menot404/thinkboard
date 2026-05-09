@@ -1,6 +1,6 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
-# pnpm via corepack (inclus dans Node 20, pas de install supplémentaire)
+# pnpm via corepack (inclus dans Node 22, pas de install supplémentaire)
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@latest --activate
