@@ -2,7 +2,7 @@ import Note from '../models/Note.js';
 
 const getAllNotes = async (_, res)=>{
     try {
-        const notes = await Note.find().sort({ createdAt: 1 });
+        const notes = await Note.find().sort({ createdAt: -1 });
         res.status(200).json({
             message: "Notes retrieved successfully",
             notes: notes
@@ -58,7 +58,7 @@ const updateNoteById =  async (req, res)=>{
     try {
         const id = req.params.id;
         const updateBody = req.body;
-        const updatedNote = await Note.findByIdAndUpdate(id, updateBody, {new: true});
+        const updatedNote = await Note.findByIdAndUpdate(id, updateBody, {returnDocument: 'after'});
 
         if (!updateBody || Object.keys(updateBody).length === 0) {
             return res.status(404).json({

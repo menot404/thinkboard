@@ -11,6 +11,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+app.get("/health", (req, res)=>{
+    res.status(200).json({ message: "Server is healthy" });
+})
+
 // Middleware
 app.use(cors({
     origin: `${process.env.CORS_ORIGIN}` || '*',

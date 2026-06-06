@@ -1,0 +1,40 @@
+name: thinkboard-dev
+
+services:
+  backend:
+    image: thinkboard-backend-dev:1.0.0
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: thinkboard-backend-dev
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./backend/src:/app/src
+    env_file:
+      - ./backend/.env
+    networks:
+      - thinkboard-network
+    restart: unless-stopped
+
+  frontend:
+    image: thinkboard-frontend-dev:1.0.0
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: thinkboard-frontend-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/src:/app/src
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+    networks:
+      - thinkboard-network
+    restart: unless-stopped
+
+networks:
+  thinkboard-network:
+    driver: bridge
