@@ -1,8 +1,133 @@
-import React from 'react'
+import { useState, useEffect } from "react";
+import { useNavigate, useParams, Link } from "react-router";
+import api from "../lib/axios";
+import toast from "react-hot-toast";
+import { LoaderIcon, ArrowLeftIcon, Trash2Icon } from "lucide-react";
 
 const NoteDetailPage = () => {
+  const [note, setNote] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const res = await api.get(`/notes/${id}`);
+        setNote(res.data.note);
+      } catch (error) {
+        console.error(`Failed to fetch notes: ${error.message}`);
+        console.error(error.response);
+        toast.error("Failed to fetch notes. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNotes();
+  }, [id]);
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this note?")) return;
+
+    try {
+      await api.delete(`/notes/${id}`);
+      toast.success("Note deleted");
+      navigate("/");
+    } catch (error) {
+      console.error(` ${error.message}`);
+      toast.error("Failed to delete note. Please try again later.");
+    }
+  }
+
+  const handleSave = async () => {
+    if (!note.title.trim() || !note.content.trim()) {
+      toast.error("Note title and content cannot be empty.");
+      return;
+    }
+    setSaving(true);
+    try {
+      await api.put(`/notes/${id}`, note);
+      toast.success("Note updated successfully.");
+      navigate("/");
+    } catch (error) {
+      console.error(` ${error.message}`);
+      toast.error("Failed to save note. Please try again later.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-base-200 flex items-center justify-center">
+        <LoaderIcon className="animate-spin size-16" />
+      </div>
+    );
+  }
   return (
-    <div>NoteDetailPage</div>
+    <>
+      <div className="min-h-screen bg-base-200">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-2xl mx-auto">
+
+            <div className="flex items-center justify-between mb-6">
+              <Link
+                to={"/"}
+                className="btn btn-ghost"
+              >
+                <ArrowLeftIcon /> <span>Back to Notes</span>
+              </Link>
+              <button
+                onClick={handleDelete}
+                className="btn btn-error btn-outline"
+              >
+                <Trash2Icon className="h-5 w-5" /> <span>Delete Note</span>
+              </button>
+            </div>
+
+            <div className="card bg-base-100">
+              <div className="card-body">
+                <div className="form-control mb-6 flex flex-col gap-2">
+                  <label htmlFor="" className="label">
+                    <span className="label-text">Note Title</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Note Title"
+                    className="input input-primary input-bordered focus:outline-0 focus:ring-2 focus:ring-primary focus:border-transparent"
+                    value={note ? note.title : ''}
+                    onChange={(e) => setNote({ ...note, title: e.target.value })}
+                    disabled={!note}
+                  />
+                </div>
+
+                <div className="form-control mb-6 flex flex-col gap-2">
+                  <label htmlFor="" className="label">
+                    <span className="label-text">Content</span>
+                  </label>
+                  <textarea
+                    placeholder="Write your note content here..."
+                    className="textarea textarea-bordered h-32 input-primary pl-4 pt-4 focus:outline-0 focus:ring-2 focus:ring-primary focus:border-transparent"
+                    value={note ? note.content : ''}
+                    onChange={(e) => setNote({ ...note, content: e.target.value })}
+                    disabled={!note}
+                  />
+                </div>
+
+                <div className="card-actions justify-end">
+                  <button className="btn btn-primary" disabled={saving} onClick={handleSave}>
+                    {saving ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 

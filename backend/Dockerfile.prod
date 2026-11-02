@@ -1,0 +1,41 @@
+# ── Stage 1 : dépendances prod uniquement ────────────────────
+FROM node:22-alpine AS deps
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml ./
+
+RUN pnpm install frozen-lockfile --prod
+
+# ── Stage 2 : production ──────────────────────────────────────
+FROM node:22-alpine
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Sécurité : utilisateur non-root
+RUN addgroup -S thinkboardgroup && adduser -S thinkboarduser -G thinkboardgroup
+
+WORKDIR /app
+
+# Uniquement les node_modules de prod (sans devDependencies)
+COPY --from=deps /app/node_modules ./node_modules
+
+#Code source
+COPY . .
+
+# Droits sur le dossier de travail
+RUN chown -R thinkboarduser:thinkboardgroup /app
+USER thinkboarduser
+
+EXPOSE 5001
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD wget -qO- http://localhost:5001/health || exit 1
+
+CMD [ "node", "src/server.js" ]
